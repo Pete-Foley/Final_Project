@@ -1,0 +1,48 @@
+---
+title: "ANALYSIS"
+output: html_document
+date: "2024-05-08"
+---
+
+```{r startup}
+library(tidyverse)
+library(GerminaR)
+library(cowplot)
+
+
+LeedyData <- read_csv("LeedyData.csv")
+
+
+LeedyData <- as.data.frame(LeedyData)
+
+fb <- LeedyData %>% 
+   dplyr::mutate(across(c(preS, lux, cold, sex, rep), as.factor))
+
+
+gsm <- ger_summary(SeedN = "seeds"
+                   , evalName = "D"
+                   , data = fb
+                   )
+
+
+```
+
+
+
+```{r analysis}
+
+mc <- gquant_analysis(data = gsm
+                , response = "grp"
+                , factors = c("preS", "lux", "cold", "sex")
+                , block = "rep"
+                , comparison = c("preS", "lux", "cold", "sex")
+                , type = "tukey"
+                , sig = 0.05
+                )
+
+Table <- as.data.frame(mc$data$table)
+
+
+
+
+```
