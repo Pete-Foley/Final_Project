@@ -1,0 +1,186 @@
+---
+title: "VISUAL"
+output: html_document
+date: "2024-05-08"
+---
+
+```{r startup}
+library(tidyverse)
+library(GerminaR)
+library(cowplot)
+
+
+LeedyData <- read_csv("LeedyData.csv")
+
+
+LeedyData <- as.data.frame(LeedyData)
+
+fb <- LeedyData %>% 
+   dplyr::mutate(across(c(preS, lux, cold, sex, rep), as.factor))
+
+
+```
+
+```{r GerminaR, include=FALSE}
+GerminaR::GerminaQuant(dependencies = TRUE)
+
+```
+
+
+
+```{r germanalysis}
+
+
+gsm <- ger_summary(SeedN = "seeds"
+                   , evalName = "D"
+                   , data = fb
+                   )
+
+
+```
+
+
+
+```{r GRPpreS}
+
+## Analysis of VAriance
+
+av_grp1 <- aov(formula = grp ~ preS*lux + rep, data = gsm)
+
+
+## MEan Comparison Test
+
+mc_grp1 <- ger_testcomp(aov = av_grp1
+                       , comp = c("preS", "lux")
+                       , type = "snk"
+                       )
+
+
+## Bar graph
+
+grp1 <- mc_grp1$table %>% 
+   fplot(data = .
+       , type = "bar"
+       , x = "preS"
+       , y = "grp"
+       , group = "lux"
+       , ylimits = c(0, 10, 2)
+       , ylab = "Germination ('%')"
+       , xlab = "Presoak Duration (hours)"
+       , glab = "lux"
+       , error = "ste"
+       , sig = "sig"
+       , color = F
+       )
+
+grp1
+
+```
+
+```{r GRPlux}
+
+## Analysis of VAriance
+
+av_grp2 <- aov(formula = grp ~ preS*lux + rep, data = gsm)
+
+
+## MEan Comparison Test
+
+mc_grp2 <- ger_testcomp(aov = av_grp2
+                       , comp = c("preS", "lux")
+                       , type = "snk"
+                       )
+
+
+## Bar graph
+
+grp2 <- mc_grp2$table %>% 
+   fplot(data = .
+       , type = "bar"
+       , x = "lux"
+       , y = "grp"
+       , group = "preS"
+       , ylimits = c(0, 10, 2)
+       , ylab = "Germination ('%')"
+       , xlab = "Lux"
+       , glab = "Presoak Duration (hours)"
+       , error = "ste"
+       , sig = "sig"
+       , color = F
+       )
+
+grp2
+
+```
+
+```{r GRPcold}
+
+## Analysis of VAriance
+
+av_grp3 <- aov(formula = grp ~ cold*preS + rep, data = gsm)
+
+
+## MEan Comparison Test
+
+mc_grp3 <- ger_testcomp(aov = av_grp3
+                       , comp = c("cold", "preS")
+                       , type = "snk"
+                       )
+
+
+## Bar graph
+
+grp3 <- mc_grp3$table %>% 
+   fplot(data = .
+       , type = "bar"
+       , x = "cold"
+       , y = "grp"
+       , group = "preS"
+       , ylimits = c(0, 10, 2)
+       , ylab = "Germination ('%')"
+       , xlab = "Cold Timing"
+       , glab = "Presoak duration (hours)"
+       , error = "ste"
+       , sig = "sig"
+       , color = F
+       )
+
+grp3
+
+```
+
+```{r GRPsex}
+
+## Analysis of VAriance
+
+av_grp4 <- aov(formula = grp ~ sex*preS + rep, data = gsm)
+
+
+## MEan Comparison Test
+
+mc_grp4 <- ger_testcomp(aov = av_grp4
+                       , comp = c("sex", "preS")
+                       , type = "snk"
+                       )
+
+
+## Bar graph
+
+grp4 <- mc_grp4$table %>% 
+   fplot(data = .
+       , type = "bar"
+       , x = "sex"
+       , y = "grp"
+       , group = "preS"
+       , ylimits = c(0, 10, 2)
+       , ylab = "Germination ('%')"
+       , xlab = "Sex"
+       , glab = "Presoak duration (hours)"
+       , error = "ste"
+       , sig = "sig"
+       , color = F
+       )
+
+grp4
+
+```
